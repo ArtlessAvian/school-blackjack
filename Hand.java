@@ -17,29 +17,61 @@ public class Hand
         this.cards = new ArrayList<Card>();
     }
     
-    public int determineValue(boolean aceIsEleven)
+    public int determineValue()
     {
         int sum = 0;
+        int aces = 0;
         for(int i = 0; i < cards.size(); i++)
         {
             Card card = cards.get(i);
-            if(card.value == 1 && aceIsEleven){
+            if (card.value == 1) {
                 sum += 11;
-            }else{
+                aces++;
+            } else {
                 sum += Math.min(card.value, 10);
             }
         }
+        
+        // Backtrack aces that are 11
+        for (int i = aces; i > 0 && sum > 21; i--)
+        {
+            sum -= 10;
+        }
+        
         return sum;
     }
     
-    public boolean isOver(boolean aceIsEleven)
+    public boolean isOver()
     {
-        return determineValue(aceIsEleven) > 21;
+        return determineValue() > 21;
     }
     
-    public boolean hit(Deck d)
+    public boolean isTwentyOne()
     {
-        cards.add(d.deck.remove(0));
-        return isOver(true) || isOver(false);
+        return determineValue() == 21;
+    }
+    
+    public boolean hit(Card c)
+    {
+        cards.add(c);
+        return isOver();
+    }
+    
+    /**
+     * Hand Testing
+     */
+    public static void main(String[] args)
+    {
+        System.out.println("-------------------");
+        for (int i = 0; i < 10; i++)
+        {
+            Hand h = new Hand();
+            h.hit(Card.getCards()[0]);
+            h.hit(Card.getCards()[(int)(Math.random() * 52)]);
+            h.hit(Card.getCards()[(int)(Math.random() * 52)]);
+            
+            System.out.println(h.cards.get(0).name + ", " + h.cards.get(1).name + ", " + h.cards.get(2).name);
+            System.out.println(h.determineValue());
+        }
     }
 }

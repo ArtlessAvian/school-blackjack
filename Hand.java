@@ -11,10 +11,12 @@ import java.util.ArrayList;
 public class Hand
 {
     ArrayList<Card> cards;
+    int money;
     
     public Hand()
     {
         this.cards = new ArrayList<Card>();
+        this.money = 100;
     }
     
     public int determineValue()
@@ -55,6 +57,22 @@ public class Hand
     {
         cards.add(c);
         return isOver();
+    }
+    
+    public String dealerString()
+    {
+        return cards.get(0).name;
+    }
+    
+    public String toString()
+    {
+        String out = "";
+        for (Card c : cards)
+        {
+            out += c.name + "\n";
+        }
+        out += "-- totaling to " + determineValue();
+        return out;
     }
     
     /**

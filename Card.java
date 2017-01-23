@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Card
 {
@@ -69,13 +70,12 @@ public class Card
 	final int value; // literal
 	final int suit; // 0 Spades, 1 Clubs, 2 Diamonds, 3 Hearts
 
-	// Draw Stuff;
+	// Draw Stuff
 	final BufferedImage img;
 	static BufferedImage backSide;
+	static int WIDTH = 165/2;
+	static int HEIGHT = 240/2;
 
-	int posX = 0;
-	int posY = 0;
-	
 	public Card(String name, int value, int suit, BufferedImage img)
 	{
 		this.name = name;
@@ -98,23 +98,6 @@ public class Card
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public void reset()
-	{
-		posX = 0;
-		posY = 0;
-	}
-
-	public void drawSelf(Graphics2D g2, Rectangle r)
-	{
-        g2.drawImage(img, posX, posY, 165, 240, null);
-        r.x = posX;
-        r.y = posY;
-        r.width = 165;
-        r.height = 240;
-        g2.setColor(Color.BLACK);
-        g2.draw(r);
 	}
 
 	public static void main(String[] args)

@@ -20,75 +20,93 @@ import javax.swing.Timer;
 
 public class BlackJackVisualize extends JComponent
 {
-    BlackJack game;
-    Rectangle r;
-    ArrayList<Card> cardsToDraw;
+	BlackJack game;
+	Rectangle r;
+	ArrayList<CardVisual> cardsToDraw;
 
-    public BlackJackVisualize()
-    {
-        game = new BlackJack();
-        game.newRound();
+	long lastTime;
 
-        r = new Rectangle();
+	State state = new DealState();
 
-        cardsToDraw = new ArrayList<Card>();
-    }
+	static int MS_PER_FRAME = 1000/60;
 
-    public void paint(Graphics g)
-    {
-        Graphics2D g2 = (Graphics2D)g;
+	public BlackJackVisualize()
+	{
+		game = new BlackJack();
 
-        // Draw Background
-        r.setSize(WIDTH, HEIGHT);
-        r.x = 0;
-        r.y = 0;
-        g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0.5f));
-        g2.fill(r);
+		r = new Rectangle();
 
-        // g2.setColor(Color.getHSBColor(0, 1, 1));
-        // r.setSize(100,100);
-        // r.x = (int)(Math.random() * 100);
-        // r.y = (int)(Math.random() * 100);
-        // g2.fill(r);
+		cardsToDraw = new ArrayList<CardVisual>();
+	}
 
-        //g2.drawImage(cardsToDraw.get(0).img, 0, 0, 100, 200, null);
+	// Too lazy for state based machine
 
-        // Draw each card
-        for (int i = 0; i < game.currentHand.cards.size(); i++)
-        {
-            Card c = game.currentHand.cards.get(i);
-            if (!cardsToDraw.contains(c))
-            {
-                c.reset();
-                c.posX = i * 100;
-            }
-            c.drawSelf(g2, r);
-        }
-    }
+	public void gameLogic(float dt)
+	{
+		state.doStuff(this,dt);
 
-    final static int WIDTH = 1200;
-    final static int HEIGHT = 675;
-    
-    public static void main(String[] args)
-    {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
+		// State Based Machine
+		// Player phase
+		// Dealer phase
+		// Clear board phase
+	}
 
-        frame.add(new BlackJackVisualize());
+	public void paint(Graphics g)
+	{
+		if (lastTime == 0) {lastTime = System.nanoTime();}
+		long currentTime = System.nanoTime();
+		float deltaTime = (float)((currentTime - lastTime) / 1000000000.0);
+		lastTime = currentTime;
 
-        frame.setVisible(true);        
+		gameLogic(deltaTime);
 
-        class TimerListener implements ActionListener
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                frame.repaint();
-            }
-        }
+		Graphics2D g2 = (Graphics2D)g;
 
-        ActionListener listener = new TimerListener();
-        Timer t = new Timer(1000/60, listener);
-        t.start();
-    }
+		// Draw Background
+		r.setSize(WIDTH, HEIGHT);
+		r.x = 0;
+		r.y = 0;
+		g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0.5f));
+		g2.fill(r);
+
+		// Draw each card
+		for (int i = 0; i < cardsToDraw.size(); i++)
+		{
+			CardVisual c = cardsToDraw.get(i);
+			c.timer += deltaTime;
+			c.drawSelf(g2, r);
+		}
+
+		r.setSize(2, 2);
+		r.x = (int)(Math.random() * 2);
+		r.y = (int)(Math.random() * 2);
+		g2.setColor(Color.getHSBColor(1, 1, 1));
+		g2.fill(r);
+	}
+
+	final static int WIDTH = 1200;
+	final static int HEIGHT = 675;
+	
+	public static void main(String[] args)
+	{
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(WIDTH, HEIGHT);
+
+		frame.add(new BlackJackVisualize());
+
+		frame.setVisible(true);        
+
+		class TimerListener implements ActionListener
+		{
+			public void actionPerformed(ActionEvent event)
+			{
+				frame.repaint();
+			}
+		}
+
+		ActionListener listener = new TimerListener();
+		Timer t = new Timer(1, listener);
+		t.start();
+	}
 }

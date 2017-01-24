@@ -22,21 +22,29 @@ public class BlackJackVisualize extends JComponent
 {
 	BlackJack game;
 	Rectangle r;
-	ArrayList<CardVisual> cardsToDraw;
 
 	long lastTime;
 
-	State state = new DealState();
+	State state;
 
 	static int MS_PER_FRAME = 1000/60;
+
+	ArrayList<ArrayList<CardVisual>> handsToCards = new ArrayList<ArrayList<CardVisual>>();
+	ArrayList<CardVisual> dealer = new ArrayList<CardVisual>();
 
 	public BlackJackVisualize()
 	{
 		game = new BlackJack();
 
+		for (int i = 0; i < game.allHands.size(); i++)
+		{
+			handsToCards.add(new ArrayList<CardVisual>());
+		}
+
 		r = new Rectangle();
 
-		cardsToDraw = new ArrayList<CardVisual>();
+		state = new DealState();
+		state.enter(this);
 	}
 
 	// Too lazy for state based machine
@@ -70,9 +78,9 @@ public class BlackJackVisualize extends JComponent
 		g2.fill(r);
 
 		// Draw each card
-		for (int i = 0; i < cardsToDraw.size(); i++)
+		for (int i = 0; i < CardVisual.allCards.size(); i++)
 		{
-			CardVisual c = cardsToDraw.get(i);
+			CardVisual c = CardVisual.allCards.get(i);
 			c.timer += deltaTime;
 			c.drawSelf(g2, r);
 		}

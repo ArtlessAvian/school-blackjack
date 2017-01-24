@@ -25,6 +25,7 @@ public class CardVisual
 	boolean isHidden = false;
 
 	static ArrayList<CardVisual> moving = new ArrayList<CardVisual>();
+	static ArrayList<CardVisual> allCards = new ArrayList<CardVisual>();
 	
 	public CardVisual(Card c)
 	{
@@ -37,7 +38,9 @@ public class CardVisual
 		timer = 0;
 		lerpTime = 0;
 		isMoving = false;
-		isHidden = true;
+		isHidden = false;
+
+		allCards.add(this);
 	}
 
 	public void slideTo(int x, int y, float time)
@@ -57,8 +60,9 @@ public class CardVisual
 		r.width = Card.WIDTH;
 		r.height = Card.HEIGHT;
 
-		if (timer > lerpTime)
+		if (isMoving && timer > lerpTime)
 		{
+			System.out.println(posX);
 			isMoving = false;
 			CardVisual.moving.remove(this);
 		}
@@ -77,6 +81,9 @@ public class CardVisual
 			r.x = posX;
 			r.y = posY;
 		}
+
+		r.x -= Card.WIDTH/2;
+		r.y -= Card.HEIGHT/2;
 
 		if (isHidden)
 		{

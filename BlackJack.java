@@ -14,6 +14,7 @@ import java.util.Scanner;
 public class BlackJack
 {
 	public Deck deck;
+	int id;
 	public Hand currentHand;
 	public Hand dealer;
 	public ArrayList<Hand> allHands;
@@ -23,10 +24,34 @@ public class BlackJack
 		deck = new Deck();
 		currentHand = new Hand();
 		dealer = new Hand();
-		//allHands = new ArrayList<Hand>();
-		//allHands.add(new Hand());
+		allHands = new ArrayList<Hand>();
+		allHands.add(null);
+		allHands.add(new Hand());
+		// allHands.add(new Hand());
 	}
 	
+	public void switchToHand(int newID)
+	{
+		allHands.set(id, currentHand); // overwrite the null
+		id = newID;
+		currentHand = allHands.get(id);
+		allHands.set(id, null);
+	}
+
+	public Card addCardToCurrent()
+	{
+		Card c = deck.drawCard();
+		currentHand.cards.add(c);
+		return c;
+	}
+
+	public Card addCardToDealer()
+	{
+		Card c = deck.drawCard();
+		dealer.cards.add(c);
+		return c;
+	}
+
 	/**
 	 * The actual game
 	 */

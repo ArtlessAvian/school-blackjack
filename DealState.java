@@ -2,7 +2,30 @@ public class DealState implements State
 {
 	public void enter(BlackJackVisualize game)
 	{
+		int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
 
+		CardVisual cv;
+
+		int size = game.game.allHands.size();
+		for (int i = 0; i < size; i++)
+		{
+			game.game.switchToHand(i);
+			cv = new CardVisual(game.game.addCardToCurrent());
+			cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)), aaa - 20, 0.9f);
+			game.handsToCards.get(i).add(cv);
+
+			cv = new CardVisual(game.game.addCardToCurrent());
+			cv.slideTo((int)(210 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20, aaa - 20, 1f);
+			game.handsToCards.get(i).add(cv);
+		}
+
+		cv = new CardVisual(game.game.addCardToDealer());
+		cv.slideTo(100, 100, 1f);
+		game.dealer.add(cv);
+
+		cv = new CardVisual(game.game.addCardToDealer());
+		cv.slideTo(200, 100, 1f);
+		game.dealer.add(cv);
 	}
 
 	public void exit(BlackJackVisualize game)
@@ -14,15 +37,12 @@ public class DealState implements State
 
 	public void doStuff(BlackJackVisualize game, float dt)
 	{
-		stateTime += dt;
-		while (stateTime >= 0.2f)
+		if (CardVisual.moving.isEmpty())
 		{
-			System.out.println("hi");
-			CardVisual testCard = new CardVisual(game.game.deck.drawCard());
-			testCard.slideTo((int)(200 * Math.random()),(int)(200 * Math.random()),1);
-			testCard.isHidden = false;
-			stateTime -= 0.2f;
-			game.cardsToDraw.add(testCard);
+			// Goto new state
+			game.state = new PlayerState(0);
+			game.state.enter(game);
+			this.exit(game);
 		}
 	}
 }

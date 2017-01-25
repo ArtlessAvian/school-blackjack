@@ -20,12 +20,13 @@ public class DealState implements State
 		}
 
 		cv = new CardVisual(game.game.addCardToDealer());
-		cv.slideTo(100, 100, 1f);
+		cv.slideTo(BlackJackVisualize.WIDTH/2 - 100 + 50, 100, 1f);
 		game.dealer.add(cv);
 
 		cv = new CardVisual(game.game.addCardToDealer());
-		cv.slideTo(200, 100, 1f);
+		cv.slideTo(BlackJackVisualize.WIDTH/2 - 100 + 50 + 100, 100, 1f);
 		game.dealer.add(cv);
+		cv.isHidden = true;
 	}
 
 	public void exit(BlackJackVisualize game)
@@ -40,7 +41,7 @@ public class DealState implements State
 		if (CardVisual.moving.isEmpty())
 		{
 			// Goto new state
-			game.state = new PlayerState(0);
+			game.state = new PlayerState(0, game);
 			game.state.enter(game);
 			this.exit(game);
 		}

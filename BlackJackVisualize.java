@@ -26,6 +26,8 @@ public class BlackJackVisualize extends JComponent
 	long lastTime;
 
 	State state;
+	float[] timePerFrame = new float[60];
+	int thingy = 0;
 
 	static int MS_PER_FRAME = 1000/60;
 
@@ -66,6 +68,9 @@ public class BlackJackVisualize extends JComponent
 		float deltaTime = (float)((currentTime - lastTime) / 1000000000.0);
 		lastTime = currentTime;
 
+		timePerFrame[thingy] = deltaTime;
+		thingy = (thingy + 1) % 60;
+
 		gameLogic(deltaTime);
 
 		Graphics2D g2 = (Graphics2D)g;
@@ -90,6 +95,15 @@ public class BlackJackVisualize extends JComponent
 		r.y = (int)(Math.random() * 2);
 		g2.setColor(Color.getHSBColor(1, 1, 1));
 		g2.fill(r);
+
+		float averageFPS = 0;
+		for (int i = 0; i < 60; i++)
+		{
+			averageFPS += timePerFrame[i];
+		}
+		averageFPS /= 60f;
+		averageFPS = 1/averageFPS;
+		g2.drawString(averageFPS + "", 50, HEIGHT - 50);
 	}
 
 	final static int WIDTH = 1200;

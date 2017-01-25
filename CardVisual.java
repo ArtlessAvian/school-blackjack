@@ -33,8 +33,8 @@ public class CardVisual
 
 		initPosX = 0;
 		initPosY = 0;
-		posX = 0;
-		posY = 0;
+		posX = BlackJackVisualize.WIDTH*2/3;
+		posY = -20;
 		timer = 0;
 		lerpTime = 0;
 		isMoving = false;
@@ -71,7 +71,9 @@ public class CardVisual
 		{
 			// Uses Smooth Step
 			float t = Math.min(timer/(float)lerpTime,1);
-			float smoothStep = t*t*(3 - 2*t);
+			//float smoothStep = t*t*(3 - 2*t);
+			//float smoothStep = (float)Math.sqrt(1-(t-1)*(t-1));
+			float smoothStep = (float)Math.sqrt(t);
 
 			r.x = (int)(initPosX + (posX - initPosX) * smoothStep);
 			r.y = (int)(initPosY + (posY - initPosY) * smoothStep);

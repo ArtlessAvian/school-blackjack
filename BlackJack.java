@@ -70,7 +70,7 @@ public class BlackJack
 		}
 		else
 		{             
-			System.out.println("The dealer also has " + bj.dealer.cards.get(1).name);
+			System.out.println("The dealer has " + bj.dealer.cards.get(1).name);
 			System.out.println("totalling to " + bj.dealer.determineValue());
 			
 			while (bj.dealer.determineValue() < 16)
@@ -95,7 +95,7 @@ public class BlackJack
 				}
 				else
 				{
-					System.out.println("Tied.");
+					System.out.println("Push.");
 				}
 			}
 		}

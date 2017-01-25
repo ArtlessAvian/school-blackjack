@@ -17,8 +17,16 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import javax.swing.border.*;
+import javax.accessibility.*;
+import javax.swing.*;
 
-public class BlackJackVisualize extends JComponent
+public class BlackJackVisualize extends JPanel
 {
 	BlackJack game;
 	Rectangle r;
@@ -92,11 +100,34 @@ public class BlackJackVisualize extends JComponent
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(WIDTH, HEIGHT);
-
-		frame.add(new BlackJackVisualize());
-
-		frame.setVisible(true);        
-
+		
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(50,50));
+		
+		JButton hit = new JButton("HIT");
+		hit.addActionListener(new ActionListener()
+		{
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        
+		    }
+		});
+		panel.add(hit);
+		JButton stay = new JButton("STAY");
+		stay.addActionListener(new ActionListener()
+		{
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        
+		    }
+		});
+		panel.add(stay);
+		
+		frame.add(new BlackJackVisualize(), BorderLayout.CENTER);
+		frame.add(panel, BorderLayout.SOUTH);
+		
+		frame.setVisible(true);
+		
 		class TimerListener implements ActionListener
 		{
 			public void actionPerformed(ActionEvent event)

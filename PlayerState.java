@@ -5,6 +5,9 @@ public class PlayerState implements State
 	int id;
 	ArrayList<CardVisual> a;
 
+	boolean hit;
+	boolean stay;
+
 	PlayerState(int id, BlackJackVisualize game)
 	{
 		this.id = id;
@@ -16,6 +19,7 @@ public class PlayerState implements State
 	{
 		// Make button visible
 		// Expand Hand
+		BlackJackVisualize.panel.setVisible(true);
 		for (int i = 0; i < a.size(); i++)
 		{
 			CardVisual cv = a.get(i);
@@ -25,6 +29,8 @@ public class PlayerState implements State
 
 	public void exit(BlackJackVisualize game)
 	{
+		BlackJackVisualize.panel.setVisible(false);
+
 		// Remove the hand
 		int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
 		int size = game.game.allHands.size();
@@ -41,30 +47,30 @@ public class PlayerState implements State
 	public void doStuff(BlackJackVisualize game, float dt)
 	{
 		stateTime += dt;
-		if (stateTime > 1)
+		if (this.hit)
 		{
-			if (game.game.currentHand.determineValue() < 18)
+			CardVisual cv;
+			cv = new CardVisual(game.game.addCardToCurrent());
+			a.add(cv);
+
+			for (int i = 0; i < a.size(); i++)
 			{
-				CardVisual cv;
-				cv = new CardVisual(game.game.addCardToCurrent());
-				a.add(cv);
-
-				for (int i = 0; i < a.size(); i++)
-				{
-					cv = a.get(i);
-					cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);			
-				}
-
-				stateTime -= 1;
-				return;
+				cv = a.get(i);
+				cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);			
 			}
 
+			stateTime -= 1;
+			return;
+		}
+
+		if (this.stay || game.game.currentHand.determineValue() < 18)
+		{
 			if (id + 1 < game.game.allHands.size())
 			{
 				System.out.println(id);
 				game.state = new PlayerState(id + 1, game);
-				game.state.enter(game);
 				this.exit(game);
+				game.state.enter(game);
 			}
 			else
 			{

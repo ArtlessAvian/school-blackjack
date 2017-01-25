@@ -37,6 +37,8 @@ public class BlackJackVisualize extends JPanel
 	float[] timePerFrame = new float[60];
 	int thingy = 0;
 
+	static JPanel panel;
+
 	static int MS_PER_FRAME = 1000/60;
 
 	ArrayList<ArrayList<CardVisual>> handsToCards = new ArrayList<ArrayList<CardVisual>>();
@@ -121,31 +123,44 @@ public class BlackJackVisualize extends JPanel
 	{
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(WIDTH, HEIGHT);
+		frame.setSize(WIDTH, HEIGHT + 50);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setPreferredSize(new Dimension(50,50));
 		
+		class PlayerStateMagic implements ActionListener
+		{
+			BlackJackVisualize game;
+			int thingy;
+			PlayerStateMagic(BlackJackVisualize gam, int thing)
+			{
+				game = gam;
+				thingy = thing;
+			}
+
+			public void actionPerformed(ActionEvent e)
+		    {
+		    	switch (thingy)
+		    	{
+		    		case 0: (PlayerState)(game.state).hit = true;
+		    		case 1: (PlayerState)(game.state).stay = true;
+		    	}
+		    }
+		}
+
+		BlackJackVisualize game = new BlackJackVisualize();
+
 		JButton hit = new JButton("HIT");
-		hit.addActionListener(new ActionListener()
-		{
-		    public void actionPerformed(ActionEvent e)
-		    {
-		        
-		    }
-		});
+		hit.addActionListener(new PlayerStateMagic(game, 0));
 		panel.add(hit);
+
 		JButton stay = new JButton("STAY");
-		stay.addActionListener(new ActionListener()
-		{
-		    public void actionPerformed(ActionEvent e)
-		    {
-		        
-		    }
-		});
+		stay.addActionListener(new PlayerStateMagic(game, 1));
 		panel.add(stay);
+
+		BlackJackVisualize.panel.setVisible(false);
 		
-		frame.add(new BlackJackVisualize(), BorderLayout.CENTER);
+		frame.add(game, BorderLayout.CENTER);
 		frame.add(panel, BorderLayout.SOUTH);
 		
 		frame.setVisible(true);

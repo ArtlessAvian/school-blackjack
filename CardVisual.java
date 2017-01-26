@@ -62,7 +62,7 @@ public class CardVisual
 
 		if (isMoving && timer > lerpTime)
 		{
-			System.out.println(posX);
+			// System.out.println(posX);
 			isMoving = false;
 			CardVisual.moving.remove(this);
 		}

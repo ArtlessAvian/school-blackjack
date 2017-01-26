@@ -33,11 +33,12 @@ public class BlackJackVisualize extends JPanel
 
 	long lastTime;
 
+	PlayerState ahhhh;
 	State state;
 	float[] timePerFrame = new float[60];
 	int thingy = 0;
 
-	static JPanel panel;
+	JPanel panel;
 
 	static int MS_PER_FRAME = 1000/60;
 
@@ -106,6 +107,8 @@ public class BlackJackVisualize extends JPanel
 		g2.setColor(Color.getHSBColor(1, 1, 1));
 		g2.fill(r);
 
+		state.drawSelf(g2, r);
+
 		float averageFPS = 0;
 		for (int i = 0; i < 60; i++)
 		{
@@ -113,20 +116,21 @@ public class BlackJackVisualize extends JPanel
 		}
 		averageFPS /= 60f;
 		averageFPS = 1/averageFPS;
-		g2.drawString(averageFPS + "", 50, HEIGHT - 50);
+
+		g2.setColor(Color.RED);
+
+		g2.drawString(averageFPS + "", 50, HEIGHT - 70);
+		g2.drawString(state.getClass().toString() + "", 50, HEIGHT - 120);
 	}
 
 	final static int WIDTH = 1200;
 	final static int HEIGHT = 675;
-	
+
 	public static void main(String[] args)
 	{
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(WIDTH, HEIGHT + 50);
-		
-		panel = new JPanel();
-		panel.setPreferredSize(new Dimension(50,50));
+		frame.setSize(WIDTH, HEIGHT);
 		
 		class PlayerStateMagic implements ActionListener
 		{
@@ -142,26 +146,29 @@ public class BlackJackVisualize extends JPanel
 		    {
 		    	switch (thingy)
 		    	{
-		    		case 0: (PlayerState)(game.state).hit = true;
-		    		case 1: (PlayerState)(game.state).stay = true;
+		    		case 0: {game.ahhhh.hit = true; break;}
+		    		case 1: {game.ahhhh.stay = true; break;}
 		    	}
 		    }
 		}
 
 		BlackJackVisualize game = new BlackJackVisualize();
 
+		game.panel = new JPanel();
+		game.panel.setPreferredSize(new Dimension(50,50));
+
 		JButton hit = new JButton("HIT");
 		hit.addActionListener(new PlayerStateMagic(game, 0));
-		panel.add(hit);
+		game.panel.add(hit);
 
 		JButton stay = new JButton("STAY");
 		stay.addActionListener(new PlayerStateMagic(game, 1));
-		panel.add(stay);
+		game.panel.add(stay);
 
-		BlackJackVisualize.panel.setVisible(false);
+		game.panel.setVisible(false);
 		
 		frame.add(game, BorderLayout.CENTER);
-		frame.add(panel, BorderLayout.SOUTH);
+		frame.add(game.panel, BorderLayout.SOUTH);
 		
 		frame.setVisible(true);
 		

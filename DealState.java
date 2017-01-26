@@ -5,6 +5,9 @@
  * @version (1/17/17)
  */
 
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
 public class DealState implements State
 {
 	public void enter(BlackJackVisualize game)
@@ -53,4 +56,6 @@ public class DealState implements State
 			this.exit(game);
 		}
 	}
+
+	public void drawSelf(Graphics2D g2, Rectangle r) {}
 }

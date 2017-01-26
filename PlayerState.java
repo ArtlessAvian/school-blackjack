@@ -117,7 +117,9 @@ public class PlayerState implements State
 
 			g2.setColor(new Color(1, 0f, 0f, 1 * Math.max(0,Math.min(1, deadTime/2 - 0.5f))));
 			g2.setFont(new Font("Comic Sans MS", Font.PLAIN, 48)); 
-			g2.drawString("YOU DIED", BlackJackVisualize.WIDTH/2 - MAGIC_NUMBER, BlackJackVisualize.HEIGHT/2 + 20);
+			g2.drawString("YOU DIED",
+				BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth("YOU DIED")/2,
+				BlackJackVisualize.HEIGHT/2 + 20);
 		}
 	}
 }

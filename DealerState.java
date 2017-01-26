@@ -47,7 +47,9 @@ public class DealerState implements State
 
 		if (game.game.dealer.determineValue() >= 16 || (game.game.dealer.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
 		{
-
+			this.exit(game);
+			game.state = new ClearState();
+			game.state.enter(game);
 		}
 	}
 
@@ -73,7 +75,9 @@ public class DealerState implements State
 
 			g2.setColor(new Color(1, 0f, 0f, 1 * Math.max(0,Math.min(1, deadTime/2 - 0.5f))));
 			g2.setFont(new Font("Comic Sans MS", Font.PLAIN, 48)); 
-			g2.drawString("YOU DIED", BlackJackVisualize.WIDTH/2 - MAGIC_NUMBER, BlackJackVisualize.HEIGHT/2 + 20);
+			g2.drawString("EASY MONEYYYY",
+				BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth("EASY MONEYYYY")/2,
+				BlackJackVisualize.HEIGHT/2 + 20);
 		}
 	}
 }

@@ -87,7 +87,7 @@ public class BlackJackVisualize extends JPanel
 
 		Graphics2D g2 = (Graphics2D)g;
 
-		// Draw Background
+		// Draw Background  
 		r.setSize(WIDTH, HEIGHT);
 		r.x = 0;
 		r.y = 0;
@@ -122,6 +122,7 @@ public class BlackJackVisualize extends JPanel
 
 		g2.drawString(averageFPS + "", 50, HEIGHT - 70);
 		g2.drawString(state.getClass().toString() + "", 50, HEIGHT - 120);
+		g2.drawString(CardVisual.moving.size() + "", 50, HEIGHT - 180);
 	}
 
 	final static int WIDTH = 1200;

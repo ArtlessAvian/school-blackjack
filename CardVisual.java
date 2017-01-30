@@ -10,6 +10,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Collections;
 
 public class CardVisual
 {
@@ -24,7 +27,7 @@ public class CardVisual
 	boolean isMoving = false;
 	boolean isHidden = false;
 
-	static ArrayList<CardVisual> moving = new ArrayList<CardVisual>();
+	static HashSet<CardVisual> moving = new HashSet<CardVisual>();
 	static ArrayList<CardVisual> allCards = new ArrayList<CardVisual>();
 	
 	public CardVisual(Card c)
@@ -34,7 +37,7 @@ public class CardVisual
 		initPosX = 0;
 		initPosY = 0;
 		posX = BlackJackVisualize.WIDTH*2/3;
-		posY = -20;
+		posY = -50;
 		timer = 0;
 		lerpTime = 0;
 		isMoving = false;
@@ -83,6 +86,11 @@ public class CardVisual
 			r.x = posX;
 			r.y = posY;
 		}
+
+		// if (moving.contains(this))
+		// {
+		// 	r.x += (int)(Math.random() * 100);
+		// }
 
 		r.x -= Card.WIDTH/2;
 		r.y -= Card.HEIGHT/2;

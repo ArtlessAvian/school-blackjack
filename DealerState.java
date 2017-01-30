@@ -23,7 +23,7 @@ public class DealerState implements State
 	public void doStuff(BlackJackVisualize game, float dt)
 	{
 		stateTime += dt;
-		if (stateTime > 0.2f && game.game.dealer.determineValue() < 16)
+		if (stateTime > 1f && game.game.dealer.determineValue() < 16)
 		{
 			CardVisual cv;
 			cv = new CardVisual(game.game.addCardToDealer());
@@ -35,7 +35,7 @@ public class DealerState implements State
 				cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * game.dealer.size() + 50 + 100 * i, 100, 0.3f);			
 			}
 
-			stateTime -= 0.2f;
+			stateTime -= 1f;
 
 			return;
 		}
@@ -45,7 +45,7 @@ public class DealerState implements State
 			deadTime += dt;
 		}
 
-		if (game.game.dealer.determineValue() >= 16 || (game.game.dealer.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
+		if ((game.game.dealer.determineValue() >= 16 && stateTime > 2) || (game.game.dealer.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
 		{
 			this.exit(game);
 			game.state = new ClearState();
@@ -55,7 +55,7 @@ public class DealerState implements State
 
 	int MAGIC_NUMBER = 120;
 
-	public void drawSelf(Graphics2D g2, Rectangle r)
+	public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
 	{
 		if (deadTime != 0)
 		{
@@ -78,6 +78,28 @@ public class DealerState implements State
 			g2.drawString("EASY MONEYYYY",
 				BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth("EASY MONEYYYY")/2,
 				BlackJackVisualize.HEIGHT/2 + 20);
+		}
+		
+		g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0f));
+		g2.setFont(new Font("Impact", Font.PLAIN, 30)); 
+
+		String s = "" + game.game.dealer.determineValue();
+
+		g2.drawString(s,
+			BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth(s)/2,
+			BlackJackVisualize.HEIGHT/2 - 120);
+
+		for (int i = 0; i < game.game.allHands.size(); i++)
+		{
+			// /if (i == id) {continue;}
+
+			s = "" + game.game.allHands.get(i).determineValue();
+			int size = game.game.allHands.size();
+
+			g2.drawString(s,
+				(int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * i
+				 - g2.getFontMetrics().stringWidth(s)/2,
+				BlackJackVisualize.HEIGHT/2 + 120);
 		}
 	}
 }

@@ -107,7 +107,7 @@ public class BlackJackVisualize extends JPanel
 		g2.setColor(Color.getHSBColor(1, 1, 1));
 		g2.fill(r);
 
-		state.drawSelf(g2, r);
+		state.drawSelf(this, g2, r);
 
 		float averageFPS = 0;
 		for (int i = 0; i < 60; i++)

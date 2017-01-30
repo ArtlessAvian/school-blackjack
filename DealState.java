@@ -57,5 +57,5 @@ public class DealState implements State
 		}
 	}
 
-	public void drawSelf(Graphics2D g2, Rectangle r) {}
+	public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r) {}
 }

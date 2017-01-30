@@ -39,6 +39,7 @@ public class BlackJackVisualize extends JPanel
 	int thingy = 0;
 
 	JPanel panel;
+	JButton split;
 
 	static int MS_PER_FRAME = 1000/60;
 
@@ -148,6 +149,7 @@ public class BlackJackVisualize extends JPanel
 		    	{
 		    		case 0: {game.ahhhh.hit = true; break;}
 		    		case 1: {game.ahhhh.stay = true; break;}
+		    		case 2: {game.ahhhh.split = true; break;}
 		    	}
 		    }
 		}
@@ -156,6 +158,7 @@ public class BlackJackVisualize extends JPanel
 
 		game.panel = new JPanel();
 		game.panel.setPreferredSize(new Dimension(50,50));
+		game.panel.setBackground(Color.getHSBColor(2/3f, 0.5f, 0.5f));
 
 		JButton hit = new JButton("HIT");
 		hit.addActionListener(new PlayerStateMagic(game, 0));
@@ -164,7 +167,12 @@ public class BlackJackVisualize extends JPanel
 		JButton stay = new JButton("STAY");
 		stay.addActionListener(new PlayerStateMagic(game, 1));
 		game.panel.add(stay);
-
+		
+		game.split = new JButton("SPLIT");
+		game.split.addActionListener(new PlayerStateMagic(game, 2));
+		game.panel.add(game.split);
+		game.split.setVisible(false);
+		
 		game.panel.setVisible(false);
 		
 		frame.add(game, BorderLayout.CENTER);

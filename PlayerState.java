@@ -7,97 +7,135 @@ import java.awt.Color;
 
 public class PlayerState implements State
 {
-	int id;
-	ArrayList<CardVisual> a;
+    int id;
+    ArrayList<CardVisual> a;
 
-	boolean hit;
-	boolean stay;
+    boolean hit;
+    boolean stay;
+    boolean split;
 
-	PlayerState(int id, BlackJackVisualize game)
-	{
-		this.id = id;
-		this.a = game.handsToCards.get(id);
-		game.game.switchToHand(id);
-	}
+    PlayerState(int id, BlackJackVisualize game)
+    {
+        this.id = id;
+        this.a = game.handsToCards.get(id);
+        game.game.switchToHand(id);
+    }
 
-	public void enter(BlackJackVisualize game)
-	{
-		// Make button visible
-		// Expand Hand
-		game.ahhhh = this;
-		game.panel.setVisible(true);
-		for (int i = 0; i < a.size(); i++)
-		{
-			CardVisual cv = a.get(i);
-			cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);			
-		}
-	}
+    public void enter(BlackJackVisualize game)
+    {
+        // Make button visible
+        // Expand Hand
+        game.ahhhh = this;
+        game.panel.setVisible(true);
+        for (int i = 0; i < a.size(); i++)
+        {
+            CardVisual cv = a.get(i);
+            cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);           
+        }
+        
+        if (game.game.currentHand.cards.size() == 2)
+        {
+            game.split.setVisible(game.game.currentHand.cards.get(0).value == game.game.currentHand.cards.get(1).value);
+        }
+    }
 
-	public void exit(BlackJackVisualize game)
-	{
-		game.panel.setVisible(false);
+    public void exit(BlackJackVisualize game)
+    {
+        game.panel.setVisible(false);
 
-		// Remove the hand
-		int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
-		int size = game.game.allHands.size();
+        // Remove the hand
+        int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
+        int size = game.game.allHands.size();
 
-		for (int i = 0; i < a.size(); i++)
-		{
-			CardVisual cv = a.get(i);
-			cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (id+1)/(size+1f)) + 20 * i, aaa - 20, 0.2f);
-		}
-	}
+        for (int i = 0; i < a.size(); i++)
+        {
+            CardVisual cv = a.get(i);
+            cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (id+1)/(size+1f)) + 20 * i, aaa - 20, 0.2f);
+        }
+    }
 
-	float stateTime = 0;
-	float deadTime = 0;
+    float stateTime = 0;
+    float deadTime = 0;
 
-	public void doStuff(BlackJackVisualize game, float dt)
-	{
-		if (this.stay || (game.game.currentHand.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
-		{
-			if (id + 1 < game.game.allHands.size())
-			{
-				System.out.println(id);
-				game.state = new PlayerState(id + 1, game);
-				this.exit(game);
-				game.state.enter(game);
-			}
-			else
-			{
-				// goto new state
-				this.exit(game);
-				game.state = new DealerState();
-				game.state.enter(game);
-			}
-		}
+    public void doStuff(BlackJackVisualize game, float dt)
+    {
+        stateTime += dt;
+        
+        if (game.game.currentHand.isOver())
+        {
+            deadTime += dt;
+        }
+        
+        if (this.stay || (game.game.currentHand.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
+        {
+            if (id + 1 < game.game.allHands.size())
+            {
+                System.out.println(id);
+                game.state = new PlayerState(id + 1, game);
+                this.exit(game);
+                game.state.enter(game);
+            }
+            else
+            {
+                // goto new state
+                this.exit(game);
+                game.state = new DealerState();
+                game.state.enter(game);
+            }
+        }
+        
+        if (this.hit && !game.game.currentHand.isOver())
+        {
+            CardVisual cv;
+            cv = new CardVisual(game.game.addCardToCurrent());
+            a.add(cv);
 
-		stateTime += dt;
-		if (this.hit && !game.game.currentHand.isOver())
-		{
-			CardVisual cv;
-			cv = new CardVisual(game.game.addCardToCurrent());
-			a.add(cv);
+            for (int i = 0; i < a.size(); i++)
+            {
+                cv = a.get(i);
+                cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);           
+            }
 
-			for (int i = 0; i < a.size(); i++)
-			{
-				cv = a.get(i);
-				cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);			
-			}
+            this.hit = false;
+            
+            game.split.setVisible(false);
 
-			this.hit = false;
+            return;
+        }
+        
+        if(this.split)
+        {
+            Hand h = new Hand();
+            h.cards.add(game.game.currentHand.cards.remove(1));
+            game.game.allHands.add(h);
+            ArrayList<CardVisual> handVisual = new ArrayList<CardVisual>();
+            game.handsToCards.add(handVisual);
+            handVisual.add(game.handsToCards.get(id).remove(1));
+            
+            this.split = false;
+            game.split.setVisible(false);
+            
+            int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
+            int size = game.game.allHands.size();
+            
+            for (int i = 0; i < game.handsToCards.size(); i++)
+            {
+                if (i == id) {continue;}
+                
+                for (int j = 0; j < game.handsToCards.get(i).size(); j++)
+                {
+                     CardVisual cv = game.handsToCards.get(i).get(j);
+                     cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * j, aaa - 20, 0.2f);
 
-			return;
-		}
+                }
+            }
+            
+        }
+    }
 
-		if (game.game.currentHand.isOver())
-		{
-			deadTime += dt;
-		}
-	}
+    int MAGIC_NUMBER = 120;
 
-	int MAGIC_NUMBER = 120;
-
-	public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
+    public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
 	{
 		if (deadTime != 0)
 		{

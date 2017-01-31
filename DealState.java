@@ -21,12 +21,12 @@ public class DealState implements State
 		{
 			game.game.switchToHand(i);
 			cv = new CardVisual(game.game.addCardToCurrent());
-			cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)), aaa - 20, 0.9f);
 			game.handsToCards.get(i).add(cv);
 
 			cv = new CardVisual(game.game.addCardToCurrent());
-			cv.slideTo((int)(210 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20, aaa - 20, 1f);
 			game.handsToCards.get(i).add(cv);
+
+			VisualizeHelper.benchHand(game.handsToCards.get(i), i, size, 1f);
 		}
 
 		cv = new CardVisual(game.game.addCardToDealer());

@@ -27,11 +27,8 @@ public class PlayerState implements State
         // Expand Hand
         game.ahhhh = this;
         game.panel.setVisible(true);
-        for (int i = 0; i < a.size(); i++)
-        {
-            CardVisual cv = a.get(i);
-            cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);           
-        }
+      
+        VisualizeHelper.centerHand(a, 0.3f);
         
         if (game.game.currentHand.cards.size() == 2)
         {
@@ -44,14 +41,8 @@ public class PlayerState implements State
         game.panel.setVisible(false);
 
         // Remove the hand
-        int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
-        int size = game.game.allHands.size();
 
-        for (int i = 0; i < a.size(); i++)
-        {
-            CardVisual cv = a.get(i);
-            cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (id+1)/(size+1f)) + 20 * i, aaa - 20, 0.2f);
-        }
+        VisualizeHelper.benchHand(a, id, game.handsToCards.size(), 0.2f);
     }
 
     float stateTime = 0;
@@ -74,6 +65,7 @@ public class PlayerState implements State
                 game.state = new PlayerState(id + 1, game);
                 this.exit(game);
                 game.state.enter(game);
+                return;
             }
             else
             {
@@ -81,6 +73,7 @@ public class PlayerState implements State
                 this.exit(game);
                 game.state = new DealerState();
                 game.state.enter(game);
+                return;
             }
         }
         
@@ -90,11 +83,7 @@ public class PlayerState implements State
             cv = new CardVisual(game.game.addCardToCurrent());
             a.add(cv);
 
-            for (int i = 0; i < a.size(); i++)
-            {
-                cv = a.get(i);
-                cv.slideTo(BlackJackVisualize.WIDTH/2 - 50 * a.size() + 50 + 100 * i, BlackJackVisualize.HEIGHT/2, 0.3f);           
-            }
+            VisualizeHelper.centerHand(a, 0.5f);
 
             this.hit = false;
             
@@ -103,11 +92,12 @@ public class PlayerState implements State
             return;
         }
         
-        if(this.split)
+        if (this.split)
         {
             Hand h = new Hand();
             h.cards.add(game.game.currentHand.cards.remove(1));
             game.game.allHands.add(h);
+
             ArrayList<CardVisual> handVisual = new ArrayList<CardVisual>();
             game.handsToCards.add(handVisual);
             handVisual.add(game.handsToCards.get(id).remove(1));
@@ -115,25 +105,15 @@ public class PlayerState implements State
             this.split = false;
             game.split.setVisible(false);
             
-            int aaa = BlackJackVisualize.HEIGHT - Card.HEIGHT;
-            int size = game.game.allHands.size();
-            
             for (int i = 0; i < game.handsToCards.size(); i++)
             {
                 if (i == id) {continue;}
                 
-                for (int j = 0; j < game.handsToCards.get(i).size(); j++)
-                {
-                     CardVisual cv = game.handsToCards.get(i).get(j);
-                     cv.slideTo((int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * j, aaa - 20, 0.2f);
-
-                }
+                VisualizeHelper.benchHand(game.handsToCards.get(i), i, game.handsToCards.size(), 0.2f);
             }
             
         }
     }
-
-    int MAGIC_NUMBER = 120;
 
     public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
 	{
@@ -181,11 +161,10 @@ public class PlayerState implements State
 			if (i == id) {continue;}
 
 			s = "" + game.game.allHands.get(i).determineValue();
-			int size = game.game.allHands.size();
 
 			g2.drawString(s,
-				(int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * i
-				 - g2.getFontMetrics().stringWidth(s)/2,
+				(VisualizeHelper.distribute(i, game.handsToCards.size())
+				 - g2.getFontMetrics().stringWidth(s)/2),
 				BlackJackVisualize.HEIGHT/2 + 120);
 		}
 	}

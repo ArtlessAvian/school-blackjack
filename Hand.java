@@ -12,6 +12,11 @@ public class Hand
 {
     ArrayList<Card> cards;
     int money;
+    public Hand(Card c)
+    {
+        this();
+        this.cards.add(c);
+    }
     
     public Hand()
     {

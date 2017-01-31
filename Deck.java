@@ -21,6 +21,7 @@ public class Deck
 	public void shuffle()
 	{
 		Collections.shuffle(this.deck);
+		//this.deck.set(50, this.deck.get(12));
 	}
 	
 	public Card drawCard()

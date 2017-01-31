@@ -60,6 +60,30 @@ public class PlayerState implements State
     public void doStuff(BlackJackVisualize game, float dt)
     {
         stateTime += dt;
+        
+        if (game.game.currentHand.isOver())
+        {
+            deadTime += dt;
+        }
+        
+        if (this.stay || (game.game.currentHand.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
+        {
+            if (id + 1 < game.game.allHands.size())
+            {
+                System.out.println(id);
+                game.state = new PlayerState(id + 1, game);
+                this.exit(game);
+                game.state.enter(game);
+            }
+            else
+            {
+                // goto new state
+                this.exit(game);
+                game.state = new DealerState();
+                game.state.enter(game);
+            }
+        }
+        
         if (this.hit && !game.game.currentHand.isOver())
         {
             CardVisual cv;
@@ -77,29 +101,6 @@ public class PlayerState implements State
             game.split.setVisible(false);
 
             return;
-        }
-
-        if (game.game.currentHand.isOver())
-        {
-            deadTime += dt;
-        }
-
-        if (this.stay || (game.game.currentHand.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
-        {
-            if (id + 1 < game.game.allHands.size())
-            {
-                System.out.println(id);
-                game.state = new PlayerState(id + 1, game);
-                this.exit(game);
-                game.state.enter(game);
-            }
-            else
-            {
-                // goto new state
-                this.exit(game);
-                game.state = new DealerState();
-                game.state.enter(game);
-            }
         }
         
         if(this.split)
@@ -134,29 +135,58 @@ public class PlayerState implements State
 
     int MAGIC_NUMBER = 120;
 
-    public void drawSelf(Graphics2D g2, Rectangle r)
-    {
-        if (deadTime != 0)
-        {
-            r.width = BlackJackVisualize.WIDTH;
-            r.height = 60;
+    public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
+	{
+		if (deadTime != 0)
+		{
+			r.width = BlackJackVisualize.WIDTH;
+			r.height = 60;
 
-            r.x = 0;
-            r.y = BlackJackVisualize.HEIGHT/2 - 30;
+			r.x = 0;
+			r.y = BlackJackVisualize.HEIGHT/2 - 30;
 
-            g2.setColor(new Color(0.1f, 0.1f, 0.1f, 0.8f * Math.min(1, deadTime/2)));
-            g2.fill(r);
+			g2.setColor(new Color(0.1f, 0.1f, 0.1f, 0.8f * Math.min(1, deadTime/2)));
+			g2.fill(r);
 
-            r.height = 50;
-            r.y = BlackJackVisualize.HEIGHT/2 - 25;
+			r.height = 50;
+			r.y = BlackJackVisualize.HEIGHT/2 - 25;
 
-            g2.fill(r);
+			g2.fill(r);
 
-            g2.setColor(new Color(1, 0f, 0f, 1 * Math.max(0,Math.min(1, deadTime/2 - 0.5f))));
-            g2.setFont(new Font("Comic Sans MS", Font.PLAIN, 48)); 
-            g2.drawString("YOU DIED",
-                BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth("YOU DIED")/2,
-                BlackJackVisualize.HEIGHT/2 + 20);
-        }
-    }
+			g2.setColor(new Color(1, 0f, 0f, 1 * Math.max(0,Math.min(1, deadTime/2 - 0.5f))));
+			g2.setFont(new Font("Comic Sans MS", Font.PLAIN, 48)); 
+			g2.drawString("YOU DIED",
+				BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth("YOU DIED")/2,
+				BlackJackVisualize.HEIGHT/2 + 20);
+		}
+
+		g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0f));
+		g2.setFont(new Font("Impact", Font.PLAIN, 30)); 
+
+		String s = "" + game.game.currentHand.determineValue();
+
+		g2.drawString(s,
+			BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth(s)/2,
+			BlackJackVisualize.HEIGHT/2 - 80);
+
+		int val = Math.min(10, game.game.dealer.cards.get(0).value);
+		s = "" + (val + 1) + " - " + (val + 11);
+
+		g2.drawString(s,
+			BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth(s)/2,
+			BlackJackVisualize.HEIGHT/2 - 120);
+
+		for (int i = 0; i < game.game.allHands.size(); i++)
+		{
+			if (i == id) {continue;}
+
+			s = "" + game.game.allHands.get(i).determineValue();
+			int size = game.game.allHands.size();
+
+			g2.drawString(s,
+				(int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * i
+				 - g2.getFontMetrics().stringWidth(s)/2,
+				BlackJackVisualize.HEIGHT/2 + 120);
+		}
+	}
 }

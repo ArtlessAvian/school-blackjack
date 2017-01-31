@@ -13,5 +13,5 @@ public interface State
 	void enter(BlackJackVisualize game);
 	void exit(BlackJackVisualize game);
 	void doStuff(BlackJackVisualize game, float dt);
-	void drawSelf(Graphics2D g2, Rectangle r);
+	void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r);
 }

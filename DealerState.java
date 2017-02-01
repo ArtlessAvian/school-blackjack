@@ -23,6 +23,7 @@ public class DealerState implements State
 	public void doStuff(BlackJackVisualize game, float dt)
 	{
 		stateTime += dt;
+		
 		if (stateTime > 1f && game.game.dealer.determineValue() < 16)
 		{
 			CardVisual cv;

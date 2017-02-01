@@ -89,17 +89,14 @@ public class DealerState implements State
 			BlackJackVisualize.WIDTH/2 - g2.getFontMetrics().stringWidth(s)/2,
 			BlackJackVisualize.HEIGHT/2 - 120);
 
-		for (int i = 0; i < game.game.allHands.size(); i++)
-		{
-			// /if (i == id) {continue;}
+        for (int i = 0; i < game.game.allHands.size(); i++)
+        {
+            s = "" + game.game.allHands.get(i).determineValue();
 
-			s = "" + game.game.allHands.get(i).determineValue();
-			int size = game.game.allHands.size();
-
-			g2.drawString(s,
-				(int)(190 + (BlackJackVisualize.WIDTH - 400) * (i+1)/(size+1f)) + 20 * i
-				 - g2.getFontMetrics().stringWidth(s)/2,
-				BlackJackVisualize.HEIGHT/2 + 120);
-		}
+            g2.drawString(s,
+                (VisualizeHelper.distribute(i, game.handsToCards.size())
+                 - g2.getFontMetrics().stringWidth(s)/2),
+                BlackJackVisualize.HEIGHT/2 + 90);
+        }
 	}
 }

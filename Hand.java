@@ -10,8 +10,12 @@ import java.util.ArrayList;
 
 public class Hand
 {
+    Hand parent;
+    
     ArrayList<Card> cards;
     int money;
+    int bet;
+    
     public Hand(Card c)
     {
         this();

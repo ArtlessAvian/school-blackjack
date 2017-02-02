@@ -48,8 +48,19 @@ public class CardVisual
 
 	public void slideTo(int x, int y, float time)
 	{
-		initPosX = posX;
-		initPosY = posY;
+		float t = Math.min(timer/(float)lerpTime,1);
+		float smoothStep = t*t*(3 - 2*t);
+
+		if (isMoving)
+		{
+			initPosX = (int)(initPosX + (posX - initPosX) * smoothStep);
+			initPosY = (int)(initPosY + (posY - initPosY) * smoothStep);
+		}
+		else
+		{
+			initPosX = posX;
+			initPosY = posY;
+		}
 		posX = x;
 		posY = y;
 		timer = 0;
@@ -74,9 +85,9 @@ public class CardVisual
 		{
 			// Uses Smooth Step
 			float t = Math.min(timer/(float)lerpTime,1);
-			//float smoothStep = t*t*(3 - 2*t);
-			//float smoothStep = (float)Math.sqrt(1-(t-1)*(t-1));
-			float smoothStep = (float)Math.sqrt(t);
+			float smoothStep = t*t*(3 - 2*t);
+//			float smoothStep = (float)Math.sqrt(1-(t-1)*(t-1));
+//			float smoothStep = (float)Math.sqrt(t);
 
 			r.x = (int)(initPosX + (posX - initPosX) * smoothStep);
 			r.y = (int)(initPosY + (posY - initPosY) * smoothStep);

@@ -48,7 +48,8 @@ public class DealState implements State
 
 	public void doStuff(BlackJackVisualize game, float dt)
 	{
-		if (CardVisual.moving.isEmpty())
+		stateTime += dt;
+		if (CardVisual.moving.isEmpty() && stateTime > 0.2f)
 		{
 			// Goto new state
 			game.state = new PlayerState(0, game);

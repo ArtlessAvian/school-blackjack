@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 
 import java.awt.Graphics2D;
@@ -13,6 +14,7 @@ public class PlayerState implements State
     boolean hit;
     boolean stay;
     boolean split;
+    boolean doubledown;
 
     PlayerState(int id, BlackJackVisualize game)
     {
@@ -29,10 +31,18 @@ public class PlayerState implements State
         game.panel.setVisible(true);
       
         VisualizeHelper.centerHand(a, 0.3f);
-        
+
+        game.gameButtons[0].setVisible(true);
+        game.gameButtons[1].setVisible(true);
+
         if (game.game.currentHand.cards.size() == 2)
         {
-            game.split.setVisible(game.game.currentHand.cards.get(0).value == game.game.currentHand.cards.get(1).value);
+            game.gameButtons[2].setVisible(game.game.currentHand.cards.get(0).value == game.game.currentHand.cards.get(1).value);
+        }
+
+        if (game.game.currentHand.money >= game.game.currentHand.bet * 2)
+        {
+            game.gameButtons[3].setVisible(true);
         }
     }
 
@@ -43,6 +53,11 @@ public class PlayerState implements State
         // Remove the hand
 
         VisualizeHelper.benchHand(a, id, game.handsToCards.size(), 0.2f);
+
+        for (JButton b : game.gameButtons)
+        {
+            b.setVisible(false);
+        }
     }
 
     float stateTime = 0;
@@ -56,7 +71,23 @@ public class PlayerState implements State
         {
             deadTime += dt;
         }
-        
+
+        if (this.hit && !game.game.currentHand.isOver())
+        {
+            CardVisual cv;
+            cv = new CardVisual(game.game.addCardToCurrent());
+            a.add(cv);
+
+            VisualizeHelper.centerHand(a, 0.5f);
+
+            this.hit = false;
+
+            game.gameButtons[2].setVisible(false);
+            game.gameButtons[3].setVisible(false);
+
+            return;
+        }
+
         if (this.stay || (game.game.currentHand.isOver() && deadTime > 4 && CardVisual.moving.isEmpty()))
         {
             if (id + 1 < game.game.allHands.size())
@@ -75,21 +106,6 @@ public class PlayerState implements State
                 game.state.enter(game);
                 return;
             }
-        }
-        
-        if (this.hit && !game.game.currentHand.isOver())
-        {
-            CardVisual cv;
-            cv = new CardVisual(game.game.addCardToCurrent());
-            a.add(cv);
-
-            VisualizeHelper.centerHand(a, 0.5f);
-
-            this.hit = false;
-            
-            game.split.setVisible(false);
-
-            return;
         }
         
         if (this.split)
@@ -112,7 +128,8 @@ public class PlayerState implements State
             handVisual.add(game.handsToCards.get(id).remove(1));
             
             this.split = false;
-            game.split.setVisible(false);
+            game.gameButtons[2].setVisible(false);
+            game.gameButtons[3].setVisible(false);
             
             for (int i = 0; i < game.handsToCards.size(); i++)
             {
@@ -120,7 +137,15 @@ public class PlayerState implements State
                 
                 VisualizeHelper.benchHand(game.handsToCards.get(i), i, game.handsToCards.size(), 0.2f);
             }
-            
+        }
+
+        if (doubledown)
+        {
+            game.game.currentHand.bet *= 2;
+            this.hit = true;
+            this.stay = true;
+
+            doubledown = false;
         }
     }
 
@@ -171,10 +196,29 @@ public class PlayerState implements State
 
             s = "" + game.game.allHands.get(i).determineValue();
 
+            g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0f));
             g2.drawString(s,
                 (VisualizeHelper.distribute(i, game.handsToCards.size())
                  - g2.getFontMetrics().stringWidth(s)/2),
                 BlackJackVisualize.HEIGHT/2 + 90);
+
+            if (game.game.allHands.get(i).isOver())
+            {
+                g2.setColor(Color.getHSBColor(0.1f, 1, 1));
+                g2.drawString("DEAD",
+                    (VisualizeHelper.distribute(i, game.handsToCards.size())
+                        - g2.getFontMetrics().stringWidth("DEAD")/2),
+                    BlackJackVisualize.HEIGHT/2 + 285);
+            }
+
+            if (game.game.allHands.get(i).isTwentyOne())
+            {
+                g2.setColor(Color.getHSBColor(System.nanoTime()/759179858f, 0.5f, 0.5f));
+                g2.drawString("EZ $$$",
+                    (VisualizeHelper.distribute(i, game.handsToCards.size())
+                        - g2.getFontMetrics().stringWidth("EZ $$$")/2),
+                    BlackJackVisualize.HEIGHT/2 + 285);
+            }
         }
     }
 }

@@ -42,7 +42,8 @@ public class BlackJackVisualize extends JPanel
     int thingy = 0;
 
     JPanel panel;
-    JButton split;
+    JButton[] betButtons = new JButton[8];
+    JButton[] gameButtons = new JButton[4];
 
     static int MS_PER_FRAME = 1000/60;
 
@@ -59,9 +60,6 @@ public class BlackJackVisualize extends JPanel
         }
 
         r = new Rectangle();
-
-        state = new DealState();
-        state.enter(this);
     }
 
     // Too lazy for state based machine
@@ -91,7 +89,7 @@ public class BlackJackVisualize extends JPanel
         Graphics2D g2 = (Graphics2D)g;
 
         // Draw Background  
-        r.setSize(WIDTH, HEIGHT);
+        r.setSize(WIDTH, HEIGHT + 50);
         r.x = 0;
         r.y = 0;
         g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0.5f));
@@ -110,13 +108,12 @@ public class BlackJackVisualize extends JPanel
         
         for (int i = 0; i < handsToCards.size(); i++)
         {
-            int x = VisualizeHelper.distribute(i, CardVisual.allCards.size());
+            int x = VisualizeHelper.distribute(i, handsToCards.size());
             
-            String s = "$" + game.allHands.get(i).money + " -- Bet " + game.allHands.get(i).bet;
+            String s = "$" + (game.allHands.get(i).money) + " -- Bet " + game.allHands.get(i).bet;
             
             g2.drawString(s,
-                (VisualizeHelper.distribute(i, handsToCards.size())
-                 - g2.getFontMetrics().stringWidth(s)/2),
+                (x - g2.getFontMetrics().stringWidth(s)/2),
                 BlackJackVisualize.HEIGHT/2 + 130);
         }
 
@@ -148,9 +145,9 @@ public class BlackJackVisualize extends JPanel
 
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
+        frame.setSize(WIDTH, HEIGHT + 50);
         
         class PlayerStateMagic implements ActionListener
         {
@@ -169,7 +166,11 @@ public class BlackJackVisualize extends JPanel
                     case 0: {game.ahhhh.hit = true; break;}
                     case 1: {game.ahhhh.stay = true; break;}
                     case 2: {game.ahhhh.split = true; break;}
-                    case 3: {game.bets.allin = true; break;}
+                    case 3: {game.ahhhh.doubledown = true; break;}
+                    case 4: {game.bets.done = true; break;}
+                    case 5: {game.bets.allin = true; break;}
+                    default : {game.bets.h.bet += thingy;
+                        System.out.println("boop"); break;}
                 }
             }
         }
@@ -178,20 +179,52 @@ public class BlackJackVisualize extends JPanel
 
         game.panel = new JPanel();
         game.panel.setPreferredSize(new Dimension(50,50));
-        game.panel.setBackground(Color.getHSBColor(2/3f, 0.5f, 0.5f));
+        game.panel.setBackground(Color.getHSBColor(2/3f, 0.5f, 0.6f));
 
         JButton hit = new JButton("HIT");
         hit.addActionListener(new PlayerStateMagic(game, 0));
         game.panel.add(hit);
+        game.gameButtons[0] = hit;
 
         JButton stay = new JButton("STAY");
         stay.addActionListener(new PlayerStateMagic(game, 1));
         game.panel.add(stay);
-        
-        game.split = new JButton("SPLIT");
-        game.split.addActionListener(new PlayerStateMagic(game, 2));
-        game.panel.add(game.split);
-        game.split.setVisible(false);
+        game.gameButtons[1] = stay;
+
+        JButton split = new JButton("SPLIT");
+        split.addActionListener(new PlayerStateMagic(game, 2));
+        game.panel.add(split);
+        game.gameButtons[2] = split;
+
+        JButton dd = new JButton("DOUBLE DOWN");
+        dd.addActionListener(new PlayerStateMagic(game, 3));
+        game.panel.add(dd);
+        game.gameButtons[3] = dd;
+
+        for (JButton b : game.gameButtons)
+        {
+            b.setVisible(false);
+        }
+
+        JButton done = new JButton("DONE");
+        done.addActionListener(new PlayerStateMagic(game, 4));
+        game.panel.add(done);
+        game.betButtons[6] = done;
+
+        JButton allin = new JButton("ALL IN.");
+        allin.addActionListener(new PlayerStateMagic(game, 5));
+        game.panel.add(allin);
+        game.betButtons[7] = allin;
+
+        int[] ahhh = {-500, -100, -20, 20, 100, 500};
+        for (int i = 0; i < 6; i++)
+        {
+            JButton butt = new JButton(ahhh[i] + "");
+            butt.addActionListener(new PlayerStateMagic(game, ahhh[i]));
+            game.panel.add(butt);
+            game.betButtons[i] = butt;
+        }
+
         
         game.panel.setVisible(false);
         
@@ -199,7 +232,11 @@ public class BlackJackVisualize extends JPanel
         frame.add(game.panel, BorderLayout.SOUTH);
         
         frame.setVisible(true);
-        
+
+//        game.state = new DealState();
+        game.state = new BetsState(0, game);
+        game.state.enter(game);
+
         class TimerListener implements ActionListener
         {
             public void actionPerformed(ActionEvent event)

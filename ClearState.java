@@ -51,7 +51,8 @@ public class ClearState implements State
             game.dealer.clear();
 
             this.exit(game);
-            game.state = new DealState();
+//            game.state = new DealState();
+            game.state = new BetsState(0, game);
             game.state.enter(game);
         }
     }

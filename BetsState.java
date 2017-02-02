@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 
 import java.awt.Graphics2D;
@@ -11,26 +12,26 @@ public class BetsState implements State
     Hand h;
     
     boolean allin;
+    boolean done;
 
     BetsState(int id, BlackJackVisualize game)
     {
         this.id = id;
-        this.h = game.game.allHands.get(id);
-        game.game.switchToHand(id);
     }
 
     public void enter(BlackJackVisualize game)
     {
-        // Make button visible
-        // Expand Hand
-        game.ahhhh = this;
+        this.h = game.game.allHands.get(id);
+        h.bet = 0;
+        game.game.switchToHand(id);
+
+        game.bets = this;
         game.panel.setVisible(true);
-      
-        VisualizeHelper.centerHand(a, 0.3f);
-        
-        if (game.game.currentHand.cards.size() == 2)
+
+        // Make button visible
+        for (JButton b : game.betButtons)
         {
-            game.split.setVisible(game.game.currentHand.cards.get(0).value == game.game.currentHand.cards.get(1).value);
+            b.setVisible(true);
         }
     }
 
@@ -38,9 +39,12 @@ public class BetsState implements State
     {
         game.panel.setVisible(false);
 
-        // Remove the hand
+        for (JButton b : game.betButtons)
+        {
+            b.setVisible(false);
+        }
 
-        VisualizeHelper.benchHand(a, id, game.handsToCards.size(), 0.2f);
+        // Remove the hand
     }
 
     float stateTime = 0;
@@ -50,13 +54,22 @@ public class BetsState implements State
     {
         stateTime += dt;
         
-        if (allIn)
+        if (allin || h.bet > h.money)
         {
-            h.bets = h.money;
+            h.bet = h.money;
+            System.out.println("hi");
+            allin = false;
         }
-        
-        if (h.bets >= h.money)
+
+        if (h.bet < 0)
         {
+            h.bet = 0;
+            System.out.println("hi");
+        }
+
+        if (done)
+        {
+            System.out.println("gargr");
             if (id + 1 < game.game.allHands.size())
             {
                 System.out.println(id);
@@ -69,35 +82,21 @@ public class BetsState implements State
             {
                 // goto new state
                 this.exit(game);
-                game.state = new PlayerState(0);
+                game.state = new DealState();
                 game.state.enter(game);
                 return;
             }
-        }
-        
-        if (this.hit && !game.game.currentHand.isOver())
-        {
-            CardVisual cv;
-            cv = new CardVisual(game.game.addCardToCurrent());
-            a.add(cv);
-
-            VisualizeHelper.centerHand(a, 0.5f);
-
-            this.hit = false;
-            
-            game.split.setVisible(false);
-
-            return;
-        }
-        
-        if (this.split)
-        {
-            
         }
     }
 
     public void drawSelf(BlackJackVisualize game, Graphics2D g2, Rectangle r)
     {
+        int x = VisualizeHelper.distribute(id, game.handsToCards.size());
 
+        String s = "\\/";
+
+        g2.drawString(s,
+            (x - g2.getFontMetrics().stringWidth(s)/2),
+            BlackJackVisualize.HEIGHT/2 + 100);
     }
 }

@@ -27,7 +27,7 @@ public class BlackJack
 		allHands = new ArrayList<Hand>();
 		allHands.add(currentHand);
 		allHands.add(new Hand());
-		//allHands.add(new Hand());
+		allHands.add(new Hand());
 	}
 	
 	public void switchToHand(int newID)

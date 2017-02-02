@@ -81,8 +81,8 @@ public class BlackJackVisualize extends JPanel
         float deltaTime = (float)((currentTime - lastTime) / 1000000000.0);
         lastTime = currentTime;
 
-        timePerFrame[thingy] = deltaTime;
-        thingy = (thingy + 1) % 60;
+        //timePerFrame[thingy] = deltaTime;
+        //thingy = (thingy + 1) % 60;
 
         gameLogic(deltaTime);
 
@@ -103,11 +103,12 @@ public class BlackJackVisualize extends JPanel
             c.drawSelf(g2, r);
         }
         
-        g2.setColor(Color.getHSBColor(2/3f, 0.5f, 0f));
+        g2.setColor(Color.getHSBColor(2/3f, 1f, 0.2f));
         g2.setFont(new Font("Impact", Font.PLAIN, 30)); 
         
         for (int i = 0; i < handsToCards.size(); i++)
         {
+            //if (game.allHands.get(i).parent != null) {continue;}
             int x = VisualizeHelper.distribute(i, handsToCards.size());
             
             String s = "$" + (game.allHands.get(i).money) + " -- Bet " + game.allHands.get(i).bet;
@@ -117,27 +118,27 @@ public class BlackJackVisualize extends JPanel
                 BlackJackVisualize.HEIGHT/2 + 130);
         }
 
-        r.setSize(2, 2);
-        r.x = (int)(Math.random() * 2);
-        r.y = (int)(Math.random() * 2);
-        g2.setColor(Color.getHSBColor(1, 1, 1));
-        g2.fill(r);
+        //r.setSize(2, 2);
+       // r.x = (int)(Math.random() * 2);
+        //r.y = (int)(Math.random() * 2);
+        //g2.setColor(Color.getHSBColor(1, 1, 1));
+        //g2.fill(r);
 
         state.drawSelf(this, g2, r);
 
-        float averageFPS = 0;
-        for (int i = 0; i < 60; i++)
-        {
-            averageFPS += timePerFrame[i];
-        }
-        averageFPS /= 60f;
-        averageFPS = 1/averageFPS;
+        //float averageFPS = 0;
+        //for (int i = 0; i < 60; i++)
+        //{
+        //    averageFPS += timePerFrame[i];
+        // }
+        //averageFPS /= 60f;
+        //averageFPS = 1/averageFPS;
 
-        g2.setColor(Color.RED);
+        //g2.setColor(Color.RED);
 
-        g2.drawString(averageFPS + "", 50, HEIGHT - 70);
-        g2.drawString(state.getClass().toString() + "", 50, HEIGHT - 120);
-        g2.drawString(CardVisual.moving.size() + "", 50, HEIGHT - 180);
+        //g2.drawString(averageFPS + "", 50, HEIGHT - 70);
+        //g2.drawString(state.getClass().toString() + "", 50, HEIGHT - 120);
+        //g2.drawString(CardVisual.moving.size() + "", 50, HEIGHT - 180);
     }
 
     final static int WIDTH = 1200;
@@ -246,7 +247,7 @@ public class BlackJackVisualize extends JPanel
         }
 
         ActionListener listener = new TimerListener();
-        Timer t = new Timer(1, listener);
+        Timer t = new Timer(15, listener);
         t.start();
     }
 }

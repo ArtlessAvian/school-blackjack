@@ -93,6 +93,8 @@ public class BetsState implements State
     {
         int x = VisualizeHelper.distribute(id, game.handsToCards.size());
 
+        g2.setColor(Color.getHSBColor(2/3f, 0.5f, 1f));
+        
         String s = "\\/";
 
         g2.drawString(s,

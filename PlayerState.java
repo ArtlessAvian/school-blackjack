@@ -100,28 +100,19 @@ public class PlayerState implements State
             }
             else
             {
-                if(game.game.currentHand.isOver())
-                {
-                    this.exit(game);
-        			game.state = new ClearState();
-        			game.state.enter(game);
-                }
-                else
-                {
-                    // goto new state
-                    this.exit(game);
-                    game.state = new DealerState();
-                    game.state.enter(game);
-                    return;
-                }
+                this.exit(game);
+                game.state = new DealerState();
+                game.state.enter(game);
+                return;
             }
         }
         
         if (this.split)
         {
             Hand h = new Hand();
+            h.money = 0;
             h.cards.add(game.game.currentHand.cards.remove(1));
-            game.game.allHands.add(h);
+            game.game.allHands.add(id+1, h);
             
             if (game.game.currentHand.parent == null)
             {
@@ -131,9 +122,10 @@ public class PlayerState implements State
             {
                 h.parent = game.game.currentHand.parent;
             }
+            h.bet = h.parent.bet;
 
             ArrayList<CardVisual> handVisual = new ArrayList<CardVisual>();
-            game.handsToCards.add(handVisual);
+            game.handsToCards.add(id+1, handVisual);
             handVisual.add(game.handsToCards.get(id).remove(1));
             
             this.split = false;

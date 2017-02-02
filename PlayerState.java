@@ -51,7 +51,7 @@ public class PlayerState implements State
     public void doStuff(BlackJackVisualize game, float dt)
     {
         stateTime += dt;
-        
+            
         if (game.game.currentHand.isOver())
         {
             deadTime += dt;
@@ -69,11 +69,20 @@ public class PlayerState implements State
             }
             else
             {
-                // goto new state
-                this.exit(game);
-                game.state = new DealerState();
-                game.state.enter(game);
-                return;
+                if(game.game.currentHand.isOver())
+                {
+                    this.exit(game);
+        			game.state = new ClearState();
+        			game.state.enter(game);
+                }
+                else
+                {
+                    // goto new state
+                    this.exit(game);
+                    game.state = new DealerState();
+                    game.state.enter(game);
+                    return;
+                }
             }
         }
         
@@ -111,7 +120,14 @@ public class PlayerState implements State
                 
                 VisualizeHelper.benchHand(game.handsToCards.get(i), i, game.handsToCards.size(), 0.2f);
             }
-            
+        }
+        
+        if(game.game.currentHand.isTwentyOne())
+        {
+            this.exit(game);
+            game.state = new DealerState();
+            game.state.enter(game);
+            return;
         }
     }
 

@@ -26,7 +26,7 @@ public class BlackJack
 		dealer = new Hand();
 		allHands = new ArrayList<Hand>();
 		allHands.add(currentHand);
-		allHands.add(new Hand());
+		// allHands.add(new Hand());
 		//allHands.add(new Hand());
 	}
 	
